@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador de Bandeira de Cartão</title>
+    <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="src/main/css/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=delete" />
+</head>
+<body class="page">
+<main class="validador">
+    <h1 class="validador__titulo">VALIDADOR DE BANDEIRA DE CARTÃO</h1>
+    <div class="validador__tarja">
+        <form class="validador__formulario">
+            <fieldset class="validador__grupo">
+                <legend class="validador__label">Insira o número do cartão *</legend>
+                <input
+                        type="text"
+                        id="numeroCartao"
+                        class="validador__input"
+                        placeholder="0000 0000 0000 0000">
+            </fieldset>
+        </form>
+        <div class="validador__botoes">
+            <button type="button"
+                    id="validarBtn"
+                    class="validador__botao validador__botao--validar"
+                    aria-disabled="true">
+                    Ok
+            </button>
+            <button type="button"
+                    id="limparBtn"
+                    class="validador__botao validador__botao--limpar material-symbols-outlined"
+                    aria-disabled="true"
+                    aria-label="Limpar campo">
+                    delete
+            </button>
+        </div>
+    </div>
+    <p id="resultado"></p>
+</main>
+<footer class="social-media">
+    <p>© 2025 Juliana Chaves Palm</p>
+    <ul class="social-media__links" >
+        <li class="social-media__item">
+            <a href="https://www.linkedin.com/in/julianachavespalm" class="social-media__link"><i class="fa-brands fa-linkedin" title="Linkedin" aria-label="Linkedin"></i></a>
+        </li>
+        <li class="social-media__item"><a href="https://www.github.com/julianachavespalm" class="social-media__link">
+            <i class="fa-brands fa-github-alt" title="Github" aria-label="Github"></i></a></li>
+    </ul>
+    </p>
+
+</footer>
+<script type="module" src="src/main/js/main.js"></script>
+<script src="https://kit.fontawesome.com/e0954b0c75.js" crossorigin="anonymous"></script>
+</body>
+</html>
