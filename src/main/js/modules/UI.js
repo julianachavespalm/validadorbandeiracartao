@@ -27,8 +27,12 @@ export default class UI {
 
         // Botão limpar: comportamento local de fallback (também usado por GerenciadorEstado)
         if (this.limparBtn) {
-            this.limparBtn.addEventListener('click', () => this.limparInput());
+            this.limparBtn.addEventListener('click', () => {
+                this.limparInput();
+                this.limparResultado();
+            });
         }
+
     }
 
     /**
@@ -79,6 +83,11 @@ export default class UI {
      */
     limparInput() {
         if (this.input) this.input.value = '';
+        this.setBotoesEnabled(false);
+    }
+
+    limparResultado() {
+        if (this.input) this.resultado.value = '';
         this.setBotoesEnabled(false);
     }
 
