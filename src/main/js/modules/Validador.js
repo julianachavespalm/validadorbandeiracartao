@@ -30,8 +30,16 @@ class Validador {
      */
     static identificarBandeira(numero) {
         for (const [bandeira, config] of Object.entries(CartaoBandeiras)) {
-            if (config.regex.test(numero) && config.lengths.includes(numero.length)) {
-                return bandeira;
+            try {
+                const regexOk = !!(config.regex && config.regex.test(numero));
+                const lengthOk = Array.isArray(config.lengths) && config.lengths.includes(numero.length);
+
+                if (regexOk) {
+                    return bandeira;
+                }
+
+            } catch (err) {
+                console.warn(`Erro ao testar bandeira ${bandeira}:`, err);
             }
         }
         return null;
@@ -68,3 +76,16 @@ class Validador {
 
 export default Validador;
 
+// Expor helper para debugging no browser (apenas para desenvolvimento)
+if (typeof window !== 'undefined') {
+    // eslint-disable-next-line no-unused-vars
+    window._identificarBandeira = function (valor) {
+        try {
+            const s = String(valor).replace(/\D/g, '');
+            return Validador.identificarBandeira(s);
+        } catch (err) {
+            console.error('Erro em _identificarBandeira:', err);
+            return null;
+        }
+    };
+}

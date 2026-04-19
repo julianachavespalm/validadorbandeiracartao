@@ -25,19 +25,15 @@ public class ValidadorBandeiraCartaoPage {
     public SelenideElement getLegendInsiraNumeroCartao() {
         return legendInsiraNumeroCartao;
     }
-
     public SelenideElement getInputNumeroCartao() {
         return inputNumeroCartao;
     }
-
     public SelenideElement getButtonValidar() {
         return buttonValidar;
     }
-
     public SelenideElement getButtonLimpar() {
         return buttonLimpar;
     }
-
     public SelenideElement getTxtResultado() {
         return txtResultado;
     }

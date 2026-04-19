@@ -1,9 +1,7 @@
 /**
- * Módulo: CartaoBandeiras
- * Responsabilidade: Armazenar configurações de validação de cada bandeira
- *
- * Este módulo contém APENAS dados de configuração.
- * Não tem lógica, não manipula DOM, não faz validações.
+ * Configurações de bandeiras de cartão
+ * Responsabilidade: fornecer regexs e comprimentos válidos para cada bandeira.
+ * Este módulo é apenas um mapa de dados usado pelo Validador.
  */
 
 export const CartaoBandeiras = {
@@ -32,4 +30,3 @@ export const CartaoBandeiras = {
         "lengths": [13, 16, 19]
     }
 };
-

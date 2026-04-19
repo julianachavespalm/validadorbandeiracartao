@@ -1,0 +1,24 @@
+{
+  "cartoesInvalidos":[
+    {
+      "numeroCartao": "000000000000000",
+      "bandeira": "Cartão Inválido"
+    },
+    {
+      "numeroCartao": "1234567890123456",
+      "bandeira": "Cartão Inválido"
+    },
+    {
+      "numeroCartao": "9999999999999999",
+      "bandeira": "Cartão Inválido"
+    },
+    {
+      "numeroCartao": "1111111111111111",
+      "bandeira": "Cartão Inválido"
+    },
+    {
+      "numeroCartao": "2222222222222222",
+      "bandeira": "Cartão Inválido"
+    }
+  ]
+}

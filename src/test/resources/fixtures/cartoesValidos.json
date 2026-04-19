@@ -1,0 +1,24 @@
+{
+  "cartoesValidos":[
+    {
+      "numeroCartao": "4111111111111111",
+      "bandeira": "Visa"
+    },
+    {
+      "numeroCartao": "5500000000000004",
+      "bandeira": "Mastercard"
+    },
+    {
+      "numeroCartao": "340000000000009",
+      "bandeira": "American Express"
+    },
+    {
+      "numeroCartao": "30000000000004",
+      "bandeira": "Diners Club"
+    },
+    {
+      "numeroCartao": "6011000000000004",
+      "bandeira": "Discover"
+    }
+  ]
+}

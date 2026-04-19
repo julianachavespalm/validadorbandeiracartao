@@ -1,95 +1,92 @@
-/**
- * Módulo: UI
- * Responsabilidade: APENAS gerenciar interações com DOM
- *
- * Funções:
- * - Obter valores do DOM
- * - Atualizar elementos visuais
- * - Registrar event listeners
- */
-
 import Formatador from './Formatador.js';
 
-class UI {
+/**
+ * UI
+ * Responsabilidade: encapsular interações com o DOM relacionadas ao formulário de cartão.
+ * - Formata o input enquanto o usuário digita
+ * - Controla o estado dos botões (aria-disabled e disabled)
+ * - Exponibiliza métodos usados pelo `GerenciadorEstado` (obterNumeroCartao, limparInput, mostrarResultado)
+ */
+export default class UI {
+    /**
+     * Construtor: cacheia referências para elementos do DOM e registra listeners locais.
+     */
     constructor() {
         this.input = document.getElementById('numeroCartao');
-        this.botaoValidar = document.getElementById('validarBtn');
-        this.botaoLimpar = document.getElementById('limparBtn');
         this.resultado = document.getElementById('resultado');
-    }
+        this.validarBtn = document.getElementById('validarBtn');
+        this.limparBtn = document.getElementById('limparBtn');
 
-    /**
-     * Obtém o número do cartão limpo (apenas dígitos)
-     * @returns {string} Número do cartão sem formatação
-     */
-    obterNumeroCartaoLimpo() {
-        return Formatador.removerNaoNumericos(this.input.value);
-    }
+        // Estado inicial dos botões
+        this.setBotoesEnabled(false);
 
-    /**
-     * Define o valor do input de cartão
-     * @param {string} valor - Valor a ser exibido
-     * @param {string} interno - Valor interno (apenas dígitos)
-     */
-    definirValorInput(valor, interno = null) {
-        this.input.value = valor;
-        if (interno !== null) {
-            this.input.setAttribute('data-internal', interno);
-        } else {
-            // keep existing data-internal consistent
-            this.input.removeAttribute('data-internal');
+        // Bind do listener de input para formatar e atualizar botões
+        if (this.input) {
+            this.input.addEventListener('input', this._onInput.bind(this));
+        }
+
+        // Botão limpar: comportamento local de fallback (também usado por GerenciadorEstado)
+        if (this.limparBtn) {
+            this.limparBtn.addEventListener('click', () => this.limparInput());
         }
     }
 
     /**
-     * Habilita ou desabilita o botão de validar
-     * @param {boolean} habilitado - True para habilitar
+     * Handler interno para input: formata valor, tenta preservar caret e ativa/desativa botões.
+     * Método privado: usado apenas pela própria UI.
      */
-    definirBotaoValidar(habilitado) {
-        this.botaoValidar.disabled = !habilitado;
-        this.botaoValidar.setAttribute('aria-disabled', !habilitado);
+    _onInput() {
+        if (!this.input) return;
+        const caret = this.input.selectionStart || 0;
+        const before = this.input.value;
+        const formatted = Formatador.formatarNumeroCartao(before);
+        this.input.value = formatted;
+        // tentar restaurar caret de forma simples
+        const diff = formatted.length - before.length;
+        const pos = Math.max(0, caret + diff);
+        this.input.selectionStart = this.input.selectionEnd = pos;
+
+        const enabled = Formatador.removerNaoNumericos(formatted).length > 0;
+        this.setBotoesEnabled(enabled);
     }
 
     /**
-     * Habilita ou desabilita o botão de limpar
-     * @param {boolean} habilitado - True para habilitar
+     * Controla os estados visuais e semânticos dos botões (aria-disabled e propriedade disabled).
+     * @param {boolean} enabled - true para habilitar os botões
      */
-    definirBotaoLimpar(habilitado) {
-        this.botaoLimpar.disabled = !habilitado;
-        this.botaoLimpar.setAttribute('aria-disabled', !habilitado);
+    setBotoesEnabled(enabled) {
+        const attr = enabled ? 'false' : 'true';
+        if (this.validarBtn) {
+            this.validarBtn.setAttribute('aria-disabled', attr);
+            this.validarBtn.disabled = !enabled;
+        }
+        if (this.limparBtn) {
+            this.limparBtn.setAttribute('aria-disabled', attr);
+            this.limparBtn.disabled = !enabled;
+        }
     }
 
     /**
-     * Exibe uma mensagem de resultado (sucesso ou erro)
-     * @param {string} mensagem - Mensagem a ser exibida
-     * @param {boolean} valido - True para sucesso, false para erro
+     * Retorna o valor atual do input (possivelmente formatado).
+     * @returns {string}
      */
-    exibirResultado(mensagem, valido) {
-        this.resultado.textContent = mensagem;
-        const classe = valido ? 'resultado resultado--sucesso' : 'resultado resultado--erro';
-        this.resultado.className = classe;
+    obterNumeroCartao() {
+        return this.input ? this.input.value : '';
     }
 
     /**
-     * Limpa o resultado exibido
+     * Limpa o input e desabilita os botões.
      */
-    limparResultado() {
-        this.resultado.textContent = '';
-        this.resultado.className = 'resultado';
+    limparInput() {
+        if (this.input) this.input.value = '';
+        this.setBotoesEnabled(false);
     }
 
     /**
-     * Retorna os elementos do DOM para que outros módulos registrem eventos
-     * @returns {object} Objeto com referências aos elementos
+     * Escreve um texto simples no elemento de resultado.
+     * @param {string} text
      */
-    obterElementos() {
-        return {
-            input: this.input,
-            botaoValidar: this.botaoValidar,
-            botaoLimpar: this.botaoLimpar
-        };
+    mostrarResultado(text) {
+        if (this.resultado) this.resultado.textContent = text;
     }
 }
-
-export default UI;
-
