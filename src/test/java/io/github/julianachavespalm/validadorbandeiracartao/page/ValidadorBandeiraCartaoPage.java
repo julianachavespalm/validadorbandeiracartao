@@ -4,6 +4,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ValidadorBandeiraCartaoPage {
@@ -15,13 +16,12 @@ public class ValidadorBandeiraCartaoPage {
     private SelenideElement buttonLimpar = $("#limparBtn");
     private SelenideElement txtResultado = $("#resultado");
 
-    public void setInputNumeroCartao(String numeroCartao) {
+    public void preencherCampoNumeroCartao(String numeroCartao) {
         this.inputNumeroCartao.setValue(numeroCartao);
     }
     public SelenideElement getTituloValidadorBandeiraCartao() {
         return tituloValidadorBandeiraCartao;
     }
-
     public SelenideElement getLegendInsiraNumeroCartao() {
         return legendInsiraNumeroCartao;
     }
@@ -36,5 +36,13 @@ public class ValidadorBandeiraCartaoPage {
     }
     public SelenideElement getTxtResultado() {
         return txtResultado;
+    }
+
+    public void clicarBotaoValidar() {
+        buttonValidar.click();
+    }
+
+    public void limpar() {
+        buttonLimpar.click();
     }
 }

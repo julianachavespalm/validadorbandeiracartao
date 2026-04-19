@@ -15,4 +15,9 @@ public class AssertUtils {
         elemento.shouldBe(visible)
                 .shouldHave(Condition.attribute(atributo, valor));
     }
+
+    public static void deveEstarVazio(SelenideElement elemento) {
+        elemento.shouldBe(visible)
+                .shouldHave(Condition.empty);
+    }
 }

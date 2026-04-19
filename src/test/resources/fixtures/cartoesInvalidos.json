@@ -2,23 +2,23 @@
   "cartoesInvalidos":[
     {
       "numeroCartao": "000000000000000",
-      "bandeira": "Cartão Inválido"
+      "bandeira": "Bandeira desconhecida"
     },
     {
       "numeroCartao": "1234567890123456",
-      "bandeira": "Cartão Inválido"
+      "bandeira": "Bandeira desconhecida"
     },
     {
       "numeroCartao": "9999999999999999",
-      "bandeira": "Cartão Inválido"
+      "bandeira": "Bandeira desconhecida"
     },
     {
       "numeroCartao": "1111111111111111",
-      "bandeira": "Cartão Inválido"
+      "bandeira": "Bandeira desconhecida"
     },
     {
       "numeroCartao": "2222222222222222",
-      "bandeira": "Cartão Inválido"
+      "bandeira": "Bandeira desconhecida"
     }
   ]
 }
