@@ -21,7 +21,7 @@ public class ValidadorBandeiraCartaoPageTest {
 
     @BeforeEach
     public void setUp() {
-        open("http://192.168.0.10:63342");
+        open("https://julianachavespalm.github.io/validadorbandeiracartao/");
     }
 
     @Test
