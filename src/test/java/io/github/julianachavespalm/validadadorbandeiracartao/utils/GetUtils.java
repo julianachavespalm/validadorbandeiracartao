@@ -7,6 +7,6 @@ import static java.nio.file.Files.readString;
 
 public class GetUtils {
     public static String getJsonAsString(String path) throws IOException {
-        return readString(Paths.get(path));
+        return  readString(Paths.get(path));
     }
 }
