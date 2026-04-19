@@ -1,0 +1,13 @@
+{
+  "name": "validadorbandeiracartao",
+  "version": "1.0.0",
+  "description": "Local static server for validadorbandeiracartao (serves repository root)",
+  "private": true,
+  "scripts": {
+    "start": "http-server -c-1 . -p 63342"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
+
