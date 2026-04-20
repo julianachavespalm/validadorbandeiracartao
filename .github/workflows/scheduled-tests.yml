@@ -2,20 +2,20 @@ name: Testes Agendados
 
 on:
   schedule:
-    - cron: '0 9 * * *' # diário às 09:00 UTC
+    - cron: '0 9 * * *'
 
 permissions:
   contents: write
   pages: write
   id-token: write
-  pull-requests: write
-  checks: write
 
 jobs:
   test:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      STANDARD_USER: ${{ secrets.STANDARD_USER }}
+      STANDARD_PASSWORD: ${{ secrets.STANDARD_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -26,8 +26,31 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run all tests
-        run: mvn -B clean test
+      - name: Install Google Chrome and matching ChromeDriver
+        run: |
+          sudo apt update
+          sudo apt install -y wget gnupg unzip
+          # instala Google Chrome
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+          
+          # obtém major version do Chrome e baixa o chromedriver correspondente
+          CHROME_VER=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1)
+          CHROME_MAJOR=$(echo $CHROME_VER | cut -d. -f1)
+          LATEST=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR")
+          echo "Chrome version: $CHROME_VER, using chromedriver release: $LATEST"
+          wget -q "https://chromedriver.storage.googleapis.com/${LATEST}/chromedriver_linux64.zip"
+          unzip -q chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
+          rm chromedriver_linux64.zip
+
+      - name: Run all tests (headless)
+        run: |
+          # garante que o Chrome rode em modo headless e aponta o webdriver
+          mvn -B -Dselenide.headless=true -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver clean test
 
       - name: Gerar relatório Allure
         if: always()
