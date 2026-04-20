@@ -78,7 +78,6 @@ export default Validador;
 
 // Expor helper para debugging no browser (apenas para desenvolvimento)
 if (typeof window !== 'undefined') {
-    // eslint-disable-next-line no-unused-vars
     window._identificarBandeira = function (valor) {
         try {
             const s = String(valor).replace(/\D/g, '');
