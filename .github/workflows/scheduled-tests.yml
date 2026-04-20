@@ -28,19 +28,32 @@ jobs:
 
       - name: Install Google Chrome and matching ChromeDriver
         run: |
+          set -eo pipefail
           sudo apt update
-          sudo apt install -y wget gnupg unzip
-          # instala Google Chrome
+          sudo apt install -y wget gnupg unzip curl
           wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
           sudo apt update
           sudo apt install -y google-chrome-stable
-          
-          # obtém major version do Chrome e baixa o chromedriver correspondente
-          CHROME_VER=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1)
-          CHROME_MAJOR=$(echo $CHROME_VER | cut -d. -f1)
-          LATEST=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR")
-          echo "Chrome version: $CHROME_VER, using chromedriver release: $LATEST"
+
+          # obtém versão do Chrome
+          CHROME_VER=$(google-chrome --version | grep -oE '[0-9]+(\.[0-9]+)+' | head -1 || true)
+          CHROME_MAJOR=$(echo "$CHROME_VER" | cut -d. -f1 || true)
+          echo "Detected Chrome version: $CHROME_VER (major: $CHROME_MAJOR)"
+
+          # tenta obter LATEST_RELEASE_<MAJOR>, se falhar faz fallback para LATEST_RELEASE
+          LATEST=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR}" || true)
+          if [ -z "$LATEST" ] || echo "$LATEST" | grep -q "<Error>"; then
+            echo "No chromedriver LATEST_RELEASE_${CHROME_MAJOR} found, falling back to global LATEST_RELEASE"
+            LATEST=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE" || true)
+          fi
+
+          if [ -z "$LATEST" ]; then
+            echo "Failed to determine chromedriver release. Exiting with non-zero to surface the problem."
+            exit 1
+          fi
+
+          echo "Using chromedriver release: $LATEST"
           wget -q "https://chromedriver.storage.googleapis.com/${LATEST}/chromedriver_linux64.zip"
           unzip -q chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/chromedriver
