@@ -1,3 +1,4 @@
+# language: yaml
 name: Testes Agendados
 
 on:
@@ -26,44 +27,24 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Install Google Chrome and matching ChromeDriver
+      - name: Instalação do Google Chrome
         run: |
           set -eo pipefail
           sudo apt update
-          sudo apt install -y wget gnupg unzip curl
+          sudo apt install -y wget gnupg
           wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
           sudo apt update
           sudo apt install -y google-chrome-stable
 
-          # obtém versão do Chrome
-          CHROME_VER=$(google-chrome --version | grep -oE '[0-9]+(\.[0-9]+)+' | head -1 || true)
-          CHROME_MAJOR=$(echo "$CHROME_VER" | cut -d. -f1 || true)
-          echo "Detected Chrome version: $CHROME_VER (major: $CHROME_MAJOR)"
+          # remove qualquer chromedriver manual antigo para forçar o Selenium Manager a baixar o driver correto
+          sudo rm -f /usr/local/bin/chromedriver || true
+          sudo rm -f /usr/bin/chromedriver || true
 
-          # tenta obter LATEST_RELEASE_<MAJOR>, se falhar faz fallback para LATEST_RELEASE
-          LATEST=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR}" || true)
-          if [ -z "$LATEST" ] || echo "$LATEST" | grep -q "<Error>"; then
-            echo "No chromedriver LATEST_RELEASE_${CHROME_MAJOR} found, falling back to global LATEST_RELEASE"
-            LATEST=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE" || true)
-          fi
-
-          if [ -z "$LATEST" ]; then
-            echo "Failed to determine chromedriver release. Exiting with non-zero to surface the problem."
-            exit 1
-          fi
-
-          echo "Using chromedriver release: $LATEST"
-          wget -q "https://chromedriver.storage.googleapis.com/${LATEST}/chromedriver_linux64.zip"
-          unzip -q chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/chromedriver
-          sudo chmod +x /usr/local/bin/chromedriver
-          rm chromedriver_linux64.zip
-
-      - name: Run all tests (headless)
+      - name: Run all tests (headless, use Selenium Manager)
         run: |
-          # garante que o Chrome rode em modo headless e aponta o webdriver
-          mvn -B -Dselenide.headless=true -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver clean test
+          # não fornece -Dwebdriver.chrome.driver para permitir que o Selenium Manager resolva o driver correto
+          mvn -B -Dselenide.headless=true clean test
 
       - name: Gerar relatório Allure
         if: always()
