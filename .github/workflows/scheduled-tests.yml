@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Instalação do Google Chrome
+      - name: Instalar Google Chrome
         run: |
           set -eo pipefail
           sudo apt update
@@ -37,13 +37,12 @@ jobs:
           sudo apt update
           sudo apt install -y google-chrome-stable
 
-          # remove qualquer chromedriver manual antigo para forçar o Selenium Manager a baixar o driver correto
+          # remover chromedriver manual antigo para forçar Selenium Manager
           sudo rm -f /usr/local/bin/chromedriver || true
           sudo rm -f /usr/bin/chromedriver || true
 
       - name: Run all tests (headless, use Selenium Manager)
         run: |
-          # não fornece -Dwebdriver.chrome.driver para permitir que o Selenium Manager resolva o driver correto
           mvn -B -Dselenide.headless=true clean test
 
       - name: Gerar relatório Allure
