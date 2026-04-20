@@ -1,0 +1,54 @@
+name: Testes Regressivos
+
+on:
+  workflow_dispatch:
+    inputs:
+      test-filter:
+        description: 'Filtro de testes (Test ou Tag)'
+        required: false
+        default: 'regression'
+      filter-type:
+        description: 'Tipo de filtro'
+        required: true
+        default: 'tag'
+        type: choice
+        options:
+          - tag
+          - test-name
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Rodar testes por tag
+        if: github.event.inputs.filter-type == 'tag'
+        run: mvn clean test -Dgroups=${{ github.event.inputs.test-filter }}
+
+      - name: Rodar testes por nome
+        if: github.event.inputs.filter-type == 'test-name'
+        run: mvn clean test -Dtest=${{ github.event.inputs.test-filter }}
+
+      - name: Gerar relatório Allure
+        if: always()
+        uses: simple-elf/allure-report-action@master
+        with:
+          allure_results: target/allure-results
+          allure_history: allure-history
+          keep_reports: 20
+
+      - name: Deploy relatório
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
