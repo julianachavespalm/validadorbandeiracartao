@@ -6,16 +6,7 @@ on:
       test-filter:
         description: 'Filtro de testes (Test ou Tag)'
         required: false
-        default: 'regression'
-      browser:
-        description: 'Navegador para rodar os testes'
-        required: false
-        default: 'chrome'
-        type: choice
-        options:
-          - chrome
-          - firefox
-          - edge
+        default: 'regressive'
       filter-type:
         description: 'Tipo de filtro'
         required: true
@@ -33,7 +24,8 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
 
@@ -43,6 +35,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+
+      - name: Instalar Chrome e dependências
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
 
       - name: Rodar testes por tag
         if: github.event.inputs.filter-type == 'tag'

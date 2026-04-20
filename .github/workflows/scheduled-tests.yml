@@ -2,7 +2,7 @@ name: Testes Agendados
 
 on:
   schedule:
-    - cron: '0 9 * * 1-5' # Segunda a sexta às 9h
+    - cron: '0 9 * * 1-5'
   workflow_dispatch:
 
 permissions:
@@ -14,6 +14,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
       - uses: actions/checkout@v4
 
@@ -24,8 +27,13 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Rodar testes agendados
-        run: mvn clean test -Dgroups=regression
+      - name: Instalar Chrome e dependências
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+
+      - name: Rodar todos os testes
+        run: mvn clean test
 
       - name: Gerar relatório Allure
         if: always()
