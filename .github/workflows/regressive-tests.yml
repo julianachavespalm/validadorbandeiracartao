@@ -26,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      STANDARD_USER: ${{ secrets.STANDARD_USER }}
+      STANDARD_PASSWORD: ${{ secrets.STANDARD_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,13 +38,35 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Install Google Chrome
+        run: |
+          sudo apt update
+          sudo apt install -y wget gnupg
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt update
+          sudo apt install -y google-chrome-stable
+
       - name: Rodar testes por tag
         if: github.event.inputs.filter-type == 'tag'
         run: mvn clean test -Dgroups=${{ github.event.inputs.test-filter }}
 
       - name: Rodar testes por nome
         if: github.event.inputs.filter-type == 'test-name'
-        run: mvn clean test -Dtest=${{ github.event.inputs.test-filter }}
+        run: |
+          TEST_FILTER="${{ github.event.inputs.test-filter }}"
+          
+          # se vazio ou valor padrão, executa tudo
+          if [ -z "$TEST_FILTER" ] || [ "$TEST_FILTER" = "regressive" ]; then
+            mvn clean test
+          else
+            # se contiver '.' assume FQCN, caso contrário envolve com curingas
+            if [[ "$TEST_FILTER" == *.* ]]; then
+              mvn -Dtest="$TEST_FILTER" clean test
+            else
+              mvn -Dtest="*$TEST_FILTER*" clean test
+            fi
+          fi
 
       - name: Gerar relatório Allure
         if: always()
