@@ -1,4 +1,3 @@
-# language: yaml
 name: Testes Regressivos
 
 on:
@@ -37,7 +36,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Instalação do Google Chrome
+      - name: Instalar Google Chrome
         run: |
           set -eo pipefail
           sudo apt update
@@ -46,29 +45,27 @@ jobs:
           sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
           sudo apt update
           sudo apt install -y google-chrome-stable
-
-          # remove qualquer chromedriver manual antigo para forçar o Selenium Manager a baixar o driver correto
+          
+          # remover chromedriver manual antigo para forçar Selenium Manager
           sudo rm -f /usr/local/bin/chromedriver || true
           sudo rm -f /usr/bin/chromedriver || true
 
       - name: Rodar testes por tag
         if: github.event.inputs.filter-type == 'tag'
-        run: mvn -B -Dselenide.headless=true -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver clean test -Dgroups=${{ github.event.inputs.test-filter }}
+        run: mvn -B -Dselenide.headless=true clean test -Dgroups=${{ github.event.inputs.test-filter }}
 
       - name: Rodar testes por nome
         if: github.event.inputs.filter-type == 'test-name'
         run: |
           TEST_FILTER="${{ github.event.inputs.test-filter }}"
           
-          # se vazio ou valor padrão, executa tudo
           if [ -z "$TEST_FILTER" ] || [ "$TEST_FILTER" = "regressive" ]; then
-            mvn -B -Dselenide.headless=true -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver clean test
+            mvn -B -Dselenide.headless=true clean test
           else
-            # se contiver '.' assume FQCN, caso contrário envolve com curingas
             if [[ "$TEST_FILTER" == *.* ]]; then
-              mvn -B -Dselenide.headless=true -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver -Dtest="$TEST_FILTER" clean test
+              mvn -B -Dselenide.headless=true -Dtest="$TEST_FILTER" clean test
             else
-              mvn -B -Dselenide.headless=true -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver -Dtest="*$TEST_FILTER*" clean test
+              mvn -B -Dselenide.headless=true -Dtest="*$TEST_FILTER*" clean test
             fi
           fi
 
