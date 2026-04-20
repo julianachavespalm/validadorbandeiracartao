@@ -1,10 +1,12 @@
-name: Testes Regressivos
+name: Testes Agendados
 
 on:
+  schedule:
+    - cron: '0 8 * * *' # Agendamento diário às 08:00 UTC
   workflow_dispatch:
     inputs:
       test-filter:
-        description: 'Filtro de testes (Test ou Tag)'
+        description: 'Filtro de testes (Tag ou nome)'
         required: false
         default: 'regressive'
       filter-type:
