@@ -46,7 +46,7 @@ public class ValidadorBandeiraCartaoTest {
     }
 
     @TestFactory
-    @Tag("regression")
+    @Tag("regressive")
     @DisplayName("Deve exibir a bandeira correta para cartões válidos")
     public Stream<DynamicTest> deveExibirBandeiraParaCartaoValido() throws IOException {
         return createDynamicTests(
@@ -62,7 +62,7 @@ public class ValidadorBandeiraCartaoTest {
     }
 
     @TestFactory
-    @Tag("regression")
+    @Tag("regressive")
     @DisplayName("Deve exibir bandeira desconhecida para cartões inválidos")
     public Stream<DynamicTest> deveExibirBandeiraDesconhecidaParaCartaoInvalido() throws IOException {
         return createDynamicTests(

@@ -7,6 +7,15 @@ on:
         description: 'Filtro de testes (Test ou Tag)'
         required: false
         default: 'regression'
+      browser:
+        description: 'Navegador para rodar os testes'
+        required: false
+        default: 'chrome'
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - edge
       filter-type:
         description: 'Tipo de filtro'
         required: true
@@ -15,6 +24,11 @@ on:
         options:
           - tag
           - test-name
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   test:
