@@ -27,10 +27,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Instalar Chrome e dependências
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
 
       - name: Rodar todos os testes
         run: mvn clean test
